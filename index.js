@@ -10,5 +10,6 @@ app.listen(3000, () => {
 app.get("/", async (req, res) => {
   const zodiacResult = await getZodiac(req.query.sign);
   await saveToFile(zodiacResult, req.query.sign);
+
   res.send(zodiacResult);
 });
