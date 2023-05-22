@@ -1,3 +1,4 @@
+// TODO: to map <url, xpath> + sign translated?
 // https://zodiac.dir.bg/
 export const SignsBGxpaths = {
   unknown: "unknown",

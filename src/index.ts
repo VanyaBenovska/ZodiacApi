@@ -1,9 +1,8 @@
 import { app, startServer } from "./libs/rest";
 import { setRoutes } from "./routes/index";
 
-(async function () {
+(async function (): Promise<void> {
   try {
-    console.log(1);
     startServer();
     setRoutes(app);
   } catch (error) {

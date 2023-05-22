@@ -18,7 +18,6 @@ export const SignsBG = [
 ];
 
 export const SignsEN = [
-  "unknown",
   "aries",
   "taurus",
   "twins",
