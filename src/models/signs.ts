@@ -1,8 +1,64 @@
 export const zodiacDirBg_urlPart1 = `https://zodiac.dir.bg/sign/`;
 export const zodiacDirBg_urlPart2 = `/dneven-horoskop`;
 
+// const DEFAULT_VALUE = {
+//   text: "",
+//   date: "",
+// };
+
+const DEFAULT_VALUE = {
+  text: "",
+  date: "",
+};
+const SIGNS_VALUES = {
+  oven: DEFAULT_VALUE,
+  telets: DEFAULT_VALUE,
+  bliznatsi: DEFAULT_VALUE,
+  rak: DEFAULT_VALUE,
+};
+
+const DEFAULT_DATE = new Date("01 January 2019");
+
+// sign, dateTheInfoIsGet, dateShortString, signText
+type signInformation = [string, Date, string ];
+type allsignInformation = [signInformation];
+
+
+
+// // https://zodiac.dir.bg
+// export const SIGNS_ZODIACDIRBG: [signInformation] = [
+//   { sign: "oven", date: DEFAULT_DATE, text: "" },
+//   { sign: "telets", date: DEFAULT_DATE, text1: "" },
+//   { sign: "bliznatsi", date: DEFAULT_DATE, text: "" },
+//   { sign: "rak", date: DEFAULT_DATE, text: "" },
+//   { sign: "lav", date: DEFAULT_DATE, text: "" },
+//   { sign: "deva", date: DEFAULT_DATE, text: "" },
+//   { sign: "vezni", date: DEFAULT_DATE, text: "" },
+//   { sign: "skorpion", date: DEFAULT_DATE, text: "" },
+//   { sign: "strelets", date: DEFAULT_DATE, text: "" },
+//   { sign: "kozirog", date: DEFAULT_DATE, text: "" },
+//   { sign: "vodoley", date: DEFAULT_DATE, text: "" },
+//   { sign: "ribi", date: DEFAULT_DATE, text: "" },
+// ];
+
 // https://zodiac.dir.bg
-export const SignsBG = [
+export enum SignsBG {
+  "oven" = 1,
+  "telets",
+  "bliznatsi",
+  "rak",
+  "lav",
+  "deva",
+  "vezni",
+  "skorpion",
+  "strelets",
+  "kozirog",
+  "vodoley",
+  "ribi",
+}
+
+// https://zodiac.dir.bg
+export const SignsBGcollection = [
   "oven",
   "telets",
   "bliznatsi",
@@ -17,7 +73,7 @@ export const SignsBG = [
   "ribi",
 ];
 
-export const SignsEN = [
+export const SignsENcollection = [
   "aries",
   "taurus",
   "twins",
@@ -47,6 +103,37 @@ export const SignsENtoNumbers = {
   aquarius: 11,
   fish: 12,
 };
+
+export const SignsEnumNumbersToEN = {
+  1: "aries",
+  2: "taurus",
+  3: "twins",
+  4: "crab",
+  5: "leo",
+  6: "virgo",
+  7: "libra",
+  8: "scorpio",
+  9: "sagittarius",
+  10: "capricorn",
+  11: "aquarius",
+  12: "fish",
+};
+
+// https://zodiac.dir.bg
+export const numbersToSignsBG = new Map<number, string>([
+  [1, "oven"],
+  [2, "telets"],
+  [3, "bliznatsi"],
+  [4, "rak"],
+  [5, "lav"],
+  [6, "deva"],
+  [7, "vezni"],
+  [8, "skorpion"],
+  [9, "strelets"],
+  [10, "kozirog"],
+  [11, "vodoley"],
+  [12, "ribi"],
+]);
 
 // We use Object.entries() on the target object to make the object enumerable, and thus usable by the for…of loop. We deconstruct each item to expose variables “key” and “value”
 // for(const [key, searchEngineUrl] of Object.entries(obj)) {
