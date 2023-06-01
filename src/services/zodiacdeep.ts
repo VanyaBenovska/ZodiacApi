@@ -14,7 +14,7 @@ import {
   WebDriver,
 } from "selenium-webdriver";
 import { addSignDailyInfoIntoDB } from "../dal/zodiacdeep";
-import { getDateShortString } from "../dal/id-generator";
+import { getDateShortString } from "../helpers/id-generator";
 
 // https://zodiac.dir.bg
 export const SignsBGtexts = new Map<string, string>([

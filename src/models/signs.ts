@@ -20,10 +20,8 @@ const SIGNS_VALUES = {
 const DEFAULT_DATE = new Date("01 January 2019");
 
 // sign, dateTheInfoIsGet, dateShortString, signText
-type signInformation = [string, Date, string ];
+type signInformation = [string, Date, string];
 type allsignInformation = [signInformation];
-
-
 
 // // https://zodiac.dir.bg
 // export const SIGNS_ZODIACDIRBG: [signInformation] = [
@@ -40,6 +38,22 @@ type allsignInformation = [signInformation];
 //   { sign: "vodoley", date: DEFAULT_DATE, text: "" },
 //   { sign: "ribi", date: DEFAULT_DATE, text: "" },
 // ];
+
+// https://zodiac.dir.bg
+export const numbersSignsBG_zodiacDirBg: { id: number; name: string }[] = [
+  { id: 1, name: "oven" },
+  { id: 2, name: "telets" },
+  { id: 3, name: "bliznatsi" },
+  { id: 4, name: "rak" },
+  { id: 5, name: "lav" },
+  { id: 6, name: "deva" },
+  { id: 7, name: "vezni" },
+  { id: 8, name: "skorpion" },
+  { id: 9, name: "strelets" },
+  { id: 10, name: "kozirog" },
+  { id: 11, name: "vodoley" },
+  { id: 12, name: "ribi" },
+];
 
 // https://zodiac.dir.bg
 export enum SignsBG {
@@ -121,6 +135,22 @@ export const SignsEnumNumbersToEN = {
 
 // https://zodiac.dir.bg
 export const numbersToSignsBG = new Map<number, string>([
+  [1, "oven"],
+  [2, "telets"],
+  [3, "bliznatsi"],
+  [4, "rak"],
+  [5, "lav"],
+  [6, "deva"],
+  [7, "vezni"],
+  [8, "skorpion"],
+  [9, "strelets"],
+  [10, "kozirog"],
+  [11, "vodoley"],
+  [12, "ribi"],
+]);
+
+// https://zodiac.dir.bg
+export const numbersSignsBGobj = new Map<number, string>([
   [1, "oven"],
   [2, "telets"],
   [3, "bliznatsi"],
