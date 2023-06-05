@@ -1,8 +1,6 @@
+import { Options } from "selenium-webdriver/chrome";
 import { database } from "../libs/database";
-import {
-  isTodayRecordAbsent,
-  allSignsInformationDocumentAbsent,
-} from "../dal/zodiacdeep";
+import { isTodayRecordAbsent, getTodayRecordFromDB } from "../dal/zodiacdeep";
 import { SignsBGcollection } from "../models/signs";
 import { mergeTextToFile } from "../helpers/files";
 import {
@@ -40,19 +38,35 @@ async function convertMapToObject(): Promise<Record<string, string>> {
   return newObject;
 }
 
+const options = new Options();
 export async function getZodiac(sign: string): Promise<Record<string, any>> {
-  let driver = await new Builder().forBrowser(Browser.SAFARI).build();
+  let driver = await new Builder()
+    .forBrowser("chrome")
+    .setChromeOptions(options.addArguments("--headless=new"))
+    .build();
+
+  //this.driver = new selenium.Builder().forBrowser("chrome").withCapabilities(capabilities).build();
+
+  //     let driver = await env
+  //   .builder()
+  //   .setChromeOptions(options.addArguments('--headless=new'))
+  //   .build();
+  // await driver.get('https://selenium.dev');
+  // await driver.quit();
+
+  console.log(`DRIVER CHROME: ${driver}`);
+
   let result = {};
 
   try {
     // rest for one sign only
     if (sign) {
-      // TODO: check if sign' info is alredy added today
-      await processSignInfo(
+      const singleSignResult = await processSignInfo(
         `https://zodiac.dir.bg/sign/${sign}/dneven-horoskop`,
         driver,
         sign
       );
+      mergeTextToTheObjectInSignFieldForRestResponse(sign, singleSignResult);
     } else {
       // rest for all signs
       let AllSignsResult = "";
@@ -63,21 +77,30 @@ export async function getZodiac(sign: string): Promise<Record<string, any>> {
           driver,
           sign
         );
-        await mergeTextToFile(sign, signResult);
+        mergeTextToTheObjectInSignFieldForRestResponse(sign, signResult);
+        // await mergeTextToFile(sign, signResult);
         AllSignsResult += "\r\n\r\n";
         AllSignsResult += signResult;
       }
       // Add all signs info into file
-      mergeTextToFile("AllSignsInfo", AllSignsResult);
+      // mergeTextToFile("AllSignsInfo", AllSignsResult);
 
       result = AllSignsResult;
     }
   } catch (err) {
     console.log(err);
   } finally {
+    console.log("QUIT DRIVER!");
     await driver.quit();
   }
   return convertMapToObject();
+}
+
+function mergeTextToTheObjectInSignFieldForRestResponse(
+  sign: string,
+  signResult: string
+): void {
+  SignsBGtexts.set(sign, signResult);
 }
 
 /**
@@ -92,13 +115,8 @@ async function processSignInfo(
   url: string,
   driver: WebDriver,
   sign: string
-): Promise<Record<string, any>> {
-  const signResult = await getDailyInfo(url, driver, sign);
-  // Write sign info into file
-  await mergeTextToFile(sign, signResult);
-  return {
-    sign: signResult,
-  };
+): Promise<string> {
+  return await getDailyInfo(url, driver, sign);
 }
 
 /**
@@ -114,28 +132,40 @@ async function getDailyInfo(
   sign: string
 ): Promise<string> {
   let result = "";
-  let signText = "";
   try {
     await driver.get(url);
 
     const dateToShortString = getDateShortString();
+    const isAbsent = await isTodayRecordAbsent(sign, dateToShortString);
 
-    if (await isTodayRecordAbsent(sign, dateToShortString)) {
+    console.log("isAbsent:", isAbsent);
+
+    if (isAbsent) {
       await driver.wait(
-        until.elementLocated(
-          By.xpath("//div[@class='article-body horoscope']")
-        ),
+        until.elementLocated(By.css("#content > div.article-body.horoscope")),
         10000
       );
 
-      signText = await driver
-        .findElement(By.xpath("/html/body/main/div[8]/div[1]/div[2]/p"))
+      const signText = await driver
+        .findElement(By.css("#content > div.article-body.horoscope p"))
         .getText();
 
-      // Add sign' information in the Google Cloud Firebase DB
-      await addSignDailyInfoIntoDB(sign, dateToShortString, signText);
+      if (signText) {
+        // Add sign' information in the Google Cloud Firebase DB
+        await addSignDailyInfoIntoDB(sign, dateToShortString, signText);
+      } else {
+        console.log(
+          `TODO: Daily data's not extracted from the web site! signText: ${signText}`
+        );
+      }
+
+      // Write sign info into file
+      mergeTextToFile(sign, signText);
+
+      result = signText;
+    } else {
+      result = await getTodayRecordFromDB(sign);
     }
-    result = signText;
   } catch (error) {
     console.log(error);
   }

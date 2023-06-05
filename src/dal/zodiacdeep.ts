@@ -12,7 +12,6 @@ export async function GetArrayJSNatFromSignData(
     if (!doc.exists) {
       console.log("No such document!");
     } else {
-      console.log("Document data: (DOC DATA PASSED)");
       return doc.get("data");
     }
   } catch (err) {
@@ -65,14 +64,20 @@ export async function isTodayRecordAbsent(
   sign: string,
   todayShortString: string
 ): Promise<boolean> {
-  const obj = GetLastElementJSNatFromSignData(sign);
+  const obj = await GetLastElementJSNatFromSignData(sign);
 
-  if ((await obj).dateShortString === todayShortString) {
-    console.log("DATE IS EQUAL!");
+  if (obj.dateShortString === todayShortString) {
     return false;
   }
   console.log("TODAY DATE IS NOT IN THE DATA!");
   return true;
+}
+
+export async function getTodayRecordFromDB(sign: string): Promise<string> {
+  // TODO: if nobody asked today already for sign's data
+  // check by shortDateString
+  const todayDataObject = await GetLastElementJSNatFromSignData(sign);
+  return todayDataObject.text;
 }
 
 /**

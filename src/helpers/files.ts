@@ -1,9 +1,6 @@
 import fs from "fs";
 
-export async function mergeTextToFile(
-  fileName: string,
-  txtToAdd: string
-): Promise<void> {
+export function mergeTextToFile(fileName: string, txtToAdd: string): void {
   if (txtToAdd) {
     fs.appendFile(
       `./files/${fileName}.txt`,
