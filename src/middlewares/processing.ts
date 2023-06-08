@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-export async function processingRoutes(
+export async function loggingMiddleware(
   req: Request,
   res: Response,
   next: any

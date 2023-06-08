@@ -2,7 +2,7 @@ import bodyParser from "body-parser";
 import express from "express";
 import { getZodiac } from "../controllers/zodiac";
 import { getLuckyTextByRandomNumber } from "../controllers/lucky";
-import { processingRoutes } from "../middlewares/processing";
+import { loggingMiddleware } from "../middlewares/processing";
 
 export function setRoutes(app: express.Express): void {
   try {
@@ -10,10 +10,12 @@ export function setRoutes(app: express.Express): void {
       res.send("hello world");
     });
 
-    app.get("/zodiac", processingRoutes, getZodiac);
+    // http://localhost:3000/zodiac?sign=leo
 
-    app.get("/lucky", processingRoutes, getLuckyTextByRandomNumber);
+    app.get("/zodiac", loggingMiddleware, getZodiac);
 
+    app.get("/lucky", loggingMiddleware, getLuckyTextByRandomNumber);
+    
   } catch (error) {
     console.log(error);
   }

@@ -56,23 +56,7 @@ export const numbersSignsBG_zodiacDirBg: { id: number; name: string }[] = [
 ];
 
 // https://zodiac.dir.bg
-export enum SignsBG {
-  "oven" = 1,
-  "telets",
-  "bliznatsi",
-  "rak",
-  "lav",
-  "deva",
-  "vezni",
-  "skorpion",
-  "strelets",
-  "kozirog",
-  "vodoley",
-  "ribi",
-}
-
-// https://zodiac.dir.bg
-export const SignsBGcollection = [
+export const Signs_ZodiacDirBG = [
   "oven",
   "telets",
   "bliznatsi",

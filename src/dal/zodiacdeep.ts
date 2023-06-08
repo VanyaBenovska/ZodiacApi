@@ -1,6 +1,7 @@
 import { database } from "../libs/database";
 import { SignData } from "../models/signData";
 import { firestore } from "firebase-admin";
+import { Signs_ZodiacDirBG } from "../models/signs";
 
 export async function GetArrayJSNatFromSignData(
   sign: string
@@ -73,11 +74,27 @@ export async function isTodayRecordAbsent(
   return true;
 }
 
-export async function getTodayRecordFromDB(sign: string): Promise<string> {
+export async function getTodayAllSignRecordsFromDB(): Promise<
+  Record<string, any>
+> {
+  let signResult = [{}];
+  try {
+    for (const sign of Signs_ZodiacDirBG) {
+      signResult.push(await getTodaySignRecordFromDB(sign));
+    }
+  } catch (err) {
+    console.log(err);
+  }
+  return signResult;
+}
+
+export async function getTodaySignRecordFromDB(
+  sign: string
+): Promise<Record<string, any>> {
   // TODO: if nobody asked today already for sign's data
   // check by shortDateString
   const todayDataObject = await GetLastElementJSNatFromSignData(sign);
-  return todayDataObject.text;
+  return { sign: sign, text: todayDataObject.text };
 }
 
 /**
@@ -115,18 +132,5 @@ export async function addSignDailyInfoIntoDB(
     // //********************
   } catch (err) {
     console.log(err);
-  }
-}
-
-export async function allSignsInformationDocumentAbsent(): Promise<boolean> {
-  const query = database.firestore();
-  const cityRef = query
-    .collection("allSignsInfo")
-    .doc("allSignsInfoInOneString");
-  const doc = await cityRef.get();
-  if (!doc.exists) {
-    return true;
-  } else {
-    return false;
   }
 }
