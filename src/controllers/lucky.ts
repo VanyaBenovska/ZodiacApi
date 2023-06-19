@@ -6,10 +6,16 @@ export async function getLuckyTextByRandomNumber(
   res: Response
 ): Promise<void> {
   {
-    const luckyText = await Services.getLuckyTextByRandomNumber();
+    const luckyText = req?.query?.luckyText;
+    let totalResult = "";
+    if (typeof luckyText !== "undefined" && luckyText === "lucky") {
+      if (luckyText) {
+        totalResult = await Services.getLuckyTextByRandomNumber();
+      }
+    }
 
     res.send({
-      luckyText,
+      totalResult,
     });
   }
 }

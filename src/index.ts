@@ -7,6 +7,7 @@ import { downloadLatestSignsData } from "./services/zodiacdeep";
   try {
     startServer();
     setRoutes(app);
+    // Save today' all signs data into DB
     dailyDownloadLatestSignsData();
   } catch (error) {
     console.log(error);
@@ -16,23 +17,9 @@ import { downloadLatestSignsData } from "./services/zodiacdeep";
 export async function dailyDownloadLatestSignsData(): Promise<void> {
   try {
     //// zodiac?sign=leo
+    //// http://localhost:3000/lucky?luckyText=lucky
+   
 
-    // const now = new Date();
-    // const currentHour = now.getUTCHours() + 3;
-    // const targetHour = 8;
-    // const targetMinute = 1;
-    // const targetTime = new Date (now.getFullYear(), now.getMonth(), now.getDate(), targetHour, targetMinute);
-    // let delay = targetTime.getTime() - now.getTime();
-
-    // if (currentHour >= targetHour && now.getUTCMinutes() >= targetMinute) {
-    //     delay += 24 * 60 * 60 * 1000;
-    // }
-
-    // async function a() {
-    //   await downloadLatestSignsData()
-    // }
-    // setTimeout(a, delay);
-    // setTimeout(async () => { await downloadLatestSignsData() }, delay);
     await downloadLatestSignsData();
   } catch (error) {
     handleErrors(error);

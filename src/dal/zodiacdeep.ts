@@ -2,10 +2,11 @@ import { database } from "../libs/database";
 import { SignData } from "../models/signData";
 import { firestore } from "firebase-admin";
 import { Signs_ZodiacDirBG } from "../models/signs";
+import { ISignRecord } from "../interfaces/signs";
 
 export async function GetArrayJSNatFromSignData(
   sign: string
-): Promise<[{ createdAt: string; text: string }]> {
+): Promise<[{ sign: string; createdAt: string; text: string }]> {
   try {
     const db = database.firestore();
     const signDataRef = db.collection("signs_ZodiacDirBG").doc(sign);
@@ -18,12 +19,12 @@ export async function GetArrayJSNatFromSignData(
   } catch (err) {
     console.log(err);
   }
-  return [{ createdAt: "", text: "" }];
+  return [{ sign: sign, createdAt: "", text: "" }];
 }
 
 export async function GetLastElementJSNatFromSignData(
   sign: string
-): Promise<{ dateShortString: string; text: string }> {
+): Promise<ISignRecord> {
   try {
     const db = database.firestore();
     const signDataRef = db.collection("signs_ZodiacDirBG").doc(sign);
@@ -31,13 +32,12 @@ export async function GetLastElementJSNatFromSignData(
     if (!doc.exists) {
       console.log("No such document!");
     } else {
-      console.log("Document data: (1): ", doc.data());
+      console.log(`Document data for SIGN ${sign}: `, doc.data());
       const fieldton = doc.get("data");
       const fieldOnlyOne = fieldton[fieldton.length - 1];
-      const first = fieldOnlyOne["createdAt"];
-      const second = fieldOnlyOne["text"];
       return {
-        dateShortString: fieldOnlyOne["createdAt"],
+        sign: sign,
+        createdAt: fieldOnlyOne["createdAt"],
         text: fieldOnlyOne["text"],
       };
     }
@@ -45,7 +45,8 @@ export async function GetLastElementJSNatFromSignData(
     console.log(err);
   }
   return {
-    dateShortString: "",
+    sign: sign,
+    createdAt: "",
     text: "",
   };
 }
@@ -66,35 +67,23 @@ export async function isTodayRecordAbsent(
   todayShortString: string
 ): Promise<boolean> {
   const obj = await GetLastElementJSNatFromSignData(sign);
-
-  if (obj.dateShortString === todayShortString) {
+  if (obj.createdAt === todayShortString) {
     return false;
   }
   console.log("TODAY DATE IS NOT IN THE DATA!");
   return true;
 }
 
-export async function getTodayAllSignRecordsFromDB(): Promise<
-  Record<string, any>
-> {
-  let signResult = [{}];
+export async function getTodayAllSignRecordsFromDB(): Promise<Array<ISignRecord> | void> {
   try {
+    let signResult: Array<ISignRecord> = [];
     for (const sign of Signs_ZodiacDirBG) {
-      signResult.push(await getTodaySignRecordFromDB(sign));
+      signResult.push(await GetLastElementJSNatFromSignData(sign));
     }
+    return signResult;
   } catch (err) {
     console.log(err);
   }
-  return signResult;
-}
-
-export async function getTodaySignRecordFromDB(
-  sign: string
-): Promise<Record<string, any>> {
-  // TODO: if nobody asked today already for sign's data
-  // check by shortDateString
-  const todayDataObject = await GetLastElementJSNatFromSignData(sign);
-  return { sign: sign, text: todayDataObject.text };
 }
 
 /**
@@ -118,6 +107,7 @@ export async function addSignDailyInfoIntoDB(
     } else {
       const currArrayData = await GetArrayJSNatFromSignData(sign);
       const updatedArrayData = await AppendToArrayTodayElement(currArrayData, {
+        sign: sign,
         createdAt: createdAt,
         text: text,
       });

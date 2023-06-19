@@ -1,25 +1,42 @@
 import { Request, Response } from "express";
 import { Signs_ZodiacDirBG } from "../models/signs";
-import {
-  getTodayAllSignRecordsFromDB,
-  getTodaySignRecordFromDB,
-} from "../dal/zodiacdeep";
+import { GetLastElementJSNatFromSignData, getTodayAllSignRecordsFromDB } from "../dal/zodiacdeep";
+import { ISignRecord } from "../interfaces/signs";
+import { getText } from "../helpers/arrayProcessing";
 
 export async function getZodiac(req: Request, res: Response): Promise<void> {
   {
     const sign = req?.query?.sign;
 
-    console.log(sign);
-    let totalResult = [{}];
+    console.log("SIGN: " + sign);
+    let totalResult = "";
 
-    if (
-      typeof sign !== "undefined" &&
-      Signs_ZodiacDirBG.includes(sign as string)
-    ) {
-      if (sign) {
-        totalResult.push(await getTodaySignRecordFromDB(sign as string));
-      } else {
-        totalResult.push(await getTodayAllSignRecordsFromDB());
+    if (typeof sign !== "undefined") {
+      if (Signs_ZodiacDirBG.includes(sign as string)) {
+
+        // let a: ISignRecord = {
+        //   sign: "",
+        //   createdAt: "",
+        //   text: ""
+        // }
+        // let a: ISignRecord | undefined;
+
+        let result: Array<ISignRecord> = [];
+        let element = await GetLastElementJSNatFromSignData(sign as string);
+        if (element) {
+          result.push(element);
+        }
+        totalResult = getText(result);
+      } else if ((sign as string).toLowerCase() === "zodiac") {
+        const resultTextArray = await getTodayAllSignRecordsFromDB();
+        if (resultTextArray) {
+          totalResult = getText(resultTextArray);
+        }
+      }
+    } else {
+      const resultTextArray = await getTodayAllSignRecordsFromDB();
+      if (resultTextArray) {
+        totalResult = getText(resultTextArray);
       }
     }
 

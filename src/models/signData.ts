@@ -1,9 +1,14 @@
-export class SignData {
+import { ISignRecord } from "../interfaces/signs";
+
+export class SignData implements ISignRecord{
+  sign: string;
   createdAt: string;
   text: string;
 
-  constructor(createdAt = "", text = "") {
+  constructor(sign = "", createdAt = "", text = "") {
+    this.sign = sign; 
     this.createdAt = createdAt;
     this.text = text;
   }
+
 }

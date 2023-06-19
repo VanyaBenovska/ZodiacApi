@@ -1,12 +1,11 @@
 import { Options } from "selenium-webdriver/chrome";
 import { database } from "../libs/database";
+import { ISignRecord } from "../interfaces/signs";
 import {
   isTodayRecordAbsent,
-  getTodaySignRecordFromDB,
-  getTodayAllSignRecordsFromDB,
+  GetLastElementJSNatFromSignData,
 } from "../dal/zodiacdeep";
 import { Signs_ZodiacDirBG } from "../models/signs";
-import { mergeTextToFile } from "../helpers/files";
 import {
   Builder,
   Browser,
@@ -37,43 +36,25 @@ export const SignsBGtexts = new Map<string, string>([
   ["ribi", ""],
 ]);
 
-async function getWebDriver() : Promise<any> {
-    const options = new Options();
-    let driver = await new Builder()
-      .forBrowser("chrome")
-      .setChromeOptions(options.addArguments("--headless=new"))
-      //.setChromeService()
-      .build();
-      return driver;
-}
-
 export async function downloadLatestSignsData(): Promise<void> {
-    const options = new Options();
-    let driver = await new Builder()
-      .forBrowser("chrome")
-      .setChromeOptions(options.addArguments("--headless=new"))
-      .build();
+  const options = new Options();
+  let driver = await new Builder()
+    .forBrowser("chrome")
+    .setChromeOptions(options.addArguments("--headless=new"))
+    .build();
 
   try {
-    //let signResult = [{}];
     for (const sign of Signs_ZodiacDirBG) {
-        // const options = new Options();
-        // let driver = await new Builder()
-        //   .forBrowser("chrome")
-        //  // .setChromeOptions(options.addArguments("--headless=new"))
-        //   .build();
-        
       await getDailyInfo(
         `https://zodiac.dir.bg/sign/${sign}/dneven-horoskop`,
         driver,
         sign
       );
-      //await driver.quit();
     }
   } catch (err) {
     console.log(err);
   } finally {
-    console.log("QUIT DRIVER!");
+    console.log("QUIT DRIVER.");
     await driver.quit();
   }
 }
@@ -85,30 +66,34 @@ export async function downloadLatestSignsData(): Promise<void> {
  * @param driver WebDriver to open the url
  * @returns
  */
-async function getDailyInfo(
+export async function getDailyInfo(
   url: string,
   driver: WebDriver,
   sign: string
-): Promise<void> {
+): Promise<string> {
+  let testResult = "";
   try {
     await driver.get(url);
-
     const dateToShortString = getDateShortString();
     const isAbsent = await isTodayRecordAbsent(sign, dateToShortString);
-
+    console.log("Is data absent in DB: " + isAbsent);
     if (isAbsent) {
       await driver.wait(
-        until.elementLocated(By.css("#content > div.article-body.horoscope")),
+        until.elementLocated(
+          By.css("#content > .horoscope > #star_rating + p")
+        ), // "#content > div.article-body.horoscope")),
         10000
       );
 
-      const signText = await driver
-        .findElement(By.css("#content > div.article-body.horoscope p"))
-        .getText();
+      const signText = await driver.findElement(
+        By.css("#content > .horoscope > #star_rating + p")
+      );
+      const content = await signText.getAttribute("innerText");
 
+      //"#content > div.article-body.horoscope p"))
       if (signText) {
-        // Add sign' information in the Google Cloud Firebase DB
-        await addSignDailyInfoIntoDB(sign, dateToShortString, signText);
+        await addSignDailyInfoIntoDB(sign, dateToShortString, content);
+       
       } else {
         console.log(
           `TODO: Daily data's not extracted from the web site! signText: ${signText}`
@@ -120,16 +105,5 @@ async function getDailyInfo(
   } catch (error) {
     console.log(error);
   }
-}
-
-/**
- * rest service for one sign
- * @param sign / Zodiac
- * @returns sign / sidns' today data info
- */
-export async function getSign(sign: string): Promise<string> {
-  let todaySignInfo = SignsBGtexts.get("sign");
-  if (todaySignInfo) return todaySignInfo;
-  todaySignInfo = (await getTodaySignRecordFromDB(sign)).toString();
-  return todaySignInfo;
+  return testResult;
 }
