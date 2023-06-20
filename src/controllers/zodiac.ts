@@ -1,26 +1,19 @@
 import { Request, Response } from "express";
 import { Signs_ZodiacDirBG } from "../models/signs";
-import { GetLastElementJSNatFromSignData, getTodayAllSignRecordsFromDB } from "../dal/zodiacdeep";
+import {
+  GetLastElementJSNatFromSignData,
+  getTodayAllSignRecordsFromDB,
+} from "../dal/zodiacdeep";
 import { ISignRecord } from "../interfaces/signs";
 import { getText } from "../helpers/arrayProcessing";
 
 export async function getZodiac(req: Request, res: Response): Promise<void> {
   {
     const sign = req?.query?.sign;
-
-    console.log("SIGN: " + sign);
     let totalResult = "";
 
     if (typeof sign !== "undefined") {
       if (Signs_ZodiacDirBG.includes(sign as string)) {
-
-        // let a: ISignRecord = {
-        //   sign: "",
-        //   createdAt: "",
-        //   text: ""
-        // }
-        // let a: ISignRecord | undefined;
-
         let result: Array<ISignRecord> = [];
         let element = await GetLastElementJSNatFromSignData(sign as string);
         if (element) {

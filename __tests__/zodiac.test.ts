@@ -1,9 +1,6 @@
 import { Builder, By, WebDriver, until } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome";
-import { getDailyInfo } from "../src/services/zodiacdeep";
-import { ISignRecord } from "../src/interfaces/signs";
 import { GetLastElementJSNatFromSignData } from "../src/dal/zodiacdeep";
-//jest.useFakeTimers();
 
 describe("GetLastElementJSNatFromSignData", () => {
   const sampleSign = "oven";
