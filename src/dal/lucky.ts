@@ -1,11 +1,14 @@
 import { database } from "../libs/database";
 import { getRandomNumberBetweenTwoNumbers } from "../randomizer";
-import { numbersSignsBG_zodiacDirBg } from "../models/signs";
+import { numbersSignsBG_zodiacDirBg } from "../utils/constants/signs";
+import { handleErrors } from "../utils/errors";
 
 export async function getLuckyTextByRandomNumber(): Promise<string> {
   const luckyNumber = getRandomNumberBetweenTwoNumbers(1, 12);
   // Note! Sign names up to https://zodiac.dir.bg
-  const signObj = numbersSignsBG_zodiacDirBg.find(element => element.id === luckyNumber);
+  const signObj = numbersSignsBG_zodiacDirBg.find(
+    (element) => element.id === luckyNumber
+  );
   const sign = signObj?.name;
   try {
     const db = database.firestore();
@@ -16,14 +19,16 @@ export async function getLuckyTextByRandomNumber(): Promise<string> {
     } else {
       const luckySignAllRecords = doc.get("data");
       const recordsLength = luckySignAllRecords.length;
-      const luckyNumber = 
-        getRandomNumberBetweenTwoNumbers(0, recordsLength - 1);
+      const luckyNumber = getRandomNumberBetweenTwoNumbers(
+        0,
+        recordsLength - 1
+      );
       const luckyRecord = luckySignAllRecords[luckyNumber];
       const luckyText = luckyRecord["text"];
       return luckyText;
     }
   } catch (err) {
-    console.log(err);
+    handleErrors(err);
   }
   return "";
 }

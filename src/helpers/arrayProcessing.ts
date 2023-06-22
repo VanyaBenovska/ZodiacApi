@@ -2,9 +2,9 @@ import { ISignRecord } from "../interfaces/signs";
 
 export function getText(arrayOfSignsObjects: {}[]): string {
   let allSignsTexts = "";
-  const f = arrayOfSignsObjects.values();
-  for (let x of f) {
-    const signRecord = x as ISignRecord;
+  const arrayOfSignsObjectsValues = arrayOfSignsObjects.values();
+  for (let record of arrayOfSignsObjectsValues) {
+    const signRecord = record as ISignRecord;
     allSignsTexts += signRecord.sign;
     allSignsTexts += ": ";
     allSignsTexts += signRecord.text;

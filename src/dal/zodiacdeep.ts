@@ -1,12 +1,11 @@
 import { database } from "../libs/database";
-import { SignData } from "../models/signData";
 import { firestore } from "firebase-admin";
-import { Signs_ZodiacDirBG } from "../models/signs";
+import { Signs_ZodiacDirBG } from "../utils/constants/signs";
 import { ISignRecord } from "../interfaces/signs";
 
 export async function GetArrayJSNatFromSignData(
   sign: string
-): Promise<[{ sign: string; createdAt: string; text: string }]> {
+): Promise<[ISignRecord]> {
   try {
     const db = database.firestore();
     const signDataRef = db.collection("signs_ZodiacDirBG").doc(sign);
@@ -55,9 +54,9 @@ export async function GetLastElementJSNatFromSignData(
 // Add today data object to the end of the data array 
 */
 export async function AppendToArrayTodayElement(
-  arrayData: [SignData],
-  todayElement: SignData
-): Promise<SignData[]> {
+  arrayData: [ISignRecord],
+  todayElement: ISignRecord
+): Promise<ISignRecord[]> {
   arrayData.push(todayElement);
   return arrayData;
 }

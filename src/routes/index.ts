@@ -1,8 +1,7 @@
-import bodyParser from "body-parser";
 import express from "express";
-import { getZodiac } from "../controllers/zodiac";
-import { getLuckyTextByRandomNumber } from "../controllers/lucky";
+import { getZodiac, getLuckyZodiac } from "../controllers/zodiac";
 import { loggingMiddleware } from "../middlewares/processing";
+import { handleErrors } from "../utils/errors";
 
 export function setRoutes(app: express.Express): void {
   try {
@@ -10,13 +9,11 @@ export function setRoutes(app: express.Express): void {
       res.send("hello world");
     });
 
-    // http://localhost:3000/zodiac?sign=leo
-
     app.get("/zodiac", loggingMiddleware, getZodiac);
 
-    app.get("/lucky", loggingMiddleware, getLuckyTextByRandomNumber);
-    
-  } catch (error) {
-    console.log(error);
+    app.get("/lucky", loggingMiddleware, getLuckyZodiac);
+
+  } catch (err) {
+    handleErrors(err);
   }
 }

@@ -1,43 +1,7 @@
-export const zodiacDirBg_urlPart1 = `https://zodiac.dir.bg/sign/`;
-export const zodiacDirBg_urlPart2 = `/dneven-horoskop`;
-
-// const DEFAULT_VALUE = {
-//   text: "",
-//   date: "",
-// };
-
 const DEFAULT_VALUE = {
   text: "",
   date: "",
 };
-const SIGNS_VALUES = {
-  oven: DEFAULT_VALUE,
-  telets: DEFAULT_VALUE,
-  bliznatsi: DEFAULT_VALUE,
-  rak: DEFAULT_VALUE,
-};
-
-const DEFAULT_DATE = new Date("01 January 2019");
-
-// sign, dateTheInfoIsGet, dateShortString, signText
-type signInformation = [string, Date, string];
-type allsignInformation = [signInformation];
-
-// // https://zodiac.dir.bg
-// export const SIGNS_ZODIACDIRBG: [signInformation] = [
-//   { sign: "oven", date: DEFAULT_DATE, text: "" },
-//   { sign: "telets", date: DEFAULT_DATE, text1: "" },
-//   { sign: "bliznatsi", date: DEFAULT_DATE, text: "" },
-//   { sign: "rak", date: DEFAULT_DATE, text: "" },
-//   { sign: "lav", date: DEFAULT_DATE, text: "" },
-//   { sign: "deva", date: DEFAULT_DATE, text: "" },
-//   { sign: "vezni", date: DEFAULT_DATE, text: "" },
-//   { sign: "skorpion", date: DEFAULT_DATE, text: "" },
-//   { sign: "strelets", date: DEFAULT_DATE, text: "" },
-//   { sign: "kozirog", date: DEFAULT_DATE, text: "" },
-//   { sign: "vodoley", date: DEFAULT_DATE, text: "" },
-//   { sign: "ribi", date: DEFAULT_DATE, text: "" },
-// ];
 
 // https://zodiac.dir.bg
 export const numbersSignsBG_zodiacDirBg: { id: number; name: string }[] = [

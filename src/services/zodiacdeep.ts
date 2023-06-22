@@ -1,11 +1,8 @@
 import { Options } from "selenium-webdriver/chrome";
 import { database } from "../libs/database";
 import { ISignRecord } from "../interfaces/signs";
-import {
-  isTodayRecordAbsent,
-  GetLastElementJSNatFromSignData,
-} from "../dal/zodiacdeep";
-import { Signs_ZodiacDirBG } from "../models/signs";
+import { isTodayRecordAbsent } from "../dal/zodiacdeep";
+import { Signs_ZodiacDirBG } from "../utils/constants/signs";
 import {
   Builder,
   Browser,
@@ -15,26 +12,11 @@ import {
   WebDriver,
 } from "selenium-webdriver";
 import { addSignDailyInfoIntoDB } from "../dal/zodiacdeep";
-import { getDateShortString } from "../helpers/id-generator";
+import { getDateShortString } from "../helpers/dateProcessing";
+import { handleErrors } from "../utils/errors";
 
 const { promise } = require("selenium-webdriver");
 promise.USE_PROMISE_MANAGER = false;
-
-// https://zodiac.dir.bg
-export const SignsBGtexts = new Map<string, string>([
-  ["oven", ""],
-  ["telets", ""],
-  ["bliznatsi", ""],
-  ["rak", ""],
-  ["lav", ""],
-  ["deva", ""],
-  ["vezni", ""],
-  ["skorpion", ""],
-  ["strelets", ""],
-  ["kozirog", ""],
-  ["vodoley", ""],
-  ["ribi", ""],
-]);
 
 export async function downloadLatestSignsData(): Promise<void> {
   const options = new Options();
@@ -70,18 +52,16 @@ export async function getDailyInfo(
   url: string,
   driver: WebDriver,
   sign: string
-): Promise<string> {
-  let testResult = "";
+): Promise<void> {
   try {
     await driver.get(url);
     const dateToShortString = getDateShortString();
     const isAbsent = await isTodayRecordAbsent(sign, dateToShortString);
-    console.log("Is data absent in DB: " + isAbsent);
     if (isAbsent) {
       await driver.wait(
         until.elementLocated(
           By.css("#content > .horoscope > #star_rating + p")
-        ), // "#content > div.article-body.horoscope")),
+        ),
         10000
       );
 
@@ -90,20 +70,11 @@ export async function getDailyInfo(
       );
       const content = await signText.getAttribute("innerText");
 
-      //"#content > div.article-body.horoscope p"))
       if (signText) {
         await addSignDailyInfoIntoDB(sign, dateToShortString, content);
-       
-      } else {
-        console.log(
-          `TODO: Daily data's not extracted from the web site! signText: ${signText}`
-        );
       }
-    } else {
-      console.log("Today Record Absent in DB! isAbsent:", isAbsent);
     }
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    handleErrors(err);
   }
-  return testResult;
 }

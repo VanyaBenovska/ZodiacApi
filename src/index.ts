@@ -3,17 +3,13 @@ import { setRoutes } from "./routes/index";
 import { handleErrors } from "./utils/errors";
 import { downloadLatestSignsData } from "./services/zodiacdeep";
 
-//// zodiac?sign=leo
-//// http://localhost:3000/lucky?luckyText=lucky
-// www -> http://localhost:3000/lucky?lucky=lucky
-
 (async function (): Promise<void> {
   try {
     startServer();
     setRoutes(app);
     // Save today' all signs data into DB
     // dailyDownloadLatestSignsData();
-    // dailyDownloadLatestSignsDataFORTESTS();
+     dailyDownloadLatestSignsDataFORTESTS();
   } catch (error) {
     console.log(error);
   }

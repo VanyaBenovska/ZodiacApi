@@ -1,9 +1,10 @@
 import express from "express";
+import { logger } from "./logger";
 
 export const app = express();
 
-export function startServer() : void {
+export function startServer(): void {
   app.listen(3000, () => {
-    console.log("Listening on port 3000 new");
+    logger.info("Listening on port 3000");
   });
 }
